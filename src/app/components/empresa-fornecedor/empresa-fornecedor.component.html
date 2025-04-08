@@ -1,0 +1,248 @@
+<p-tabView>
+  <!-- Aba de Empresas -->
+  <p-tabPanel header="Empresas">
+    <div class="p-d-flex p-jc-between p-ai-center p-mb-3">
+      <div class="p-d-flex p-jc-start p-ai-center">
+        <span class="p-input-icon-left p-mr-2">
+          <i class="pi pi-search"></i>
+          <input type="text" pInputText [(ngModel)]="filtroNomeEmpresa" placeholder="Buscar por nome" class="p-mr-2">
+        </span>
+        <span class="p-input-icon-left p-mr-2">
+          <i class="pi pi-id-card"></i>
+          <input type="text" pInputText [(ngModel)]="filtroCnpjEmpresa" placeholder="Buscar por CNPJ" class="p-mr-2">
+        </span>
+        <button pButton type="button" label="Buscar" (click)="aplicarFiltrosEmpresa()" class="p-mr-2"></button>
+        <button pButton type="button" label="Limpar" (click)="limparFiltrosEmpresa()" class="p-button-secondary p-mr-2"></button>
+      </div>
+      <div>
+        <button pButton type="button" label="Nova Empresa" icon="pi pi-plus" (click)="abrirDialogEmpresa()"></button>
+      </div>
+    </div>
+    <p-table [value]="empresasFiltradas" [loading]="loading" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
+             styleClass="p-datatable-responsive" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} empresas"
+             [rowsPerPageOptions]="[10,25,50]">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>CNPJ</th>
+          <th>Nome Fantasia</th>
+          <th>CEP</th>
+          <th>Fornecedores</th>
+          <th>Ações</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-empresa>
+        <tr>
+          <td>{{empresa.cnpj}}</td>
+          <td>{{empresa.nomeFantasia}}</td>
+          <td>{{empresa.cep}}</td>
+          <td>
+            <ul class="p-list-none p-m-0" *ngIf="empresa.fornecedores?.length">
+              <li *ngFor="let fornecedor of empresa.fornecedores">
+                {{fornecedor.nome}}
+              </li>
+            </ul>
+            <span *ngIf="!empresa.fornecedores?.length">Nenhum fornecedor vinculado</span>
+          </td>
+          <td>
+            <div class="p-d-flex p-jc-start">
+              <p-button icon="pi pi-pencil" styleClass="p-button-rounded p-button-text p-mr-2"
+                        (onClick)="abrirDialogEmpresa(empresa)" pTooltip="Editar"></p-button>
+              <p-button icon="pi pi-users" styleClass="p-button-rounded p-button-text p-mr-2"
+                        (onClick)="abrirDialog(empresa)" pTooltip="Gerenciar fornecedores"></p-button>
+              <p-button icon="pi pi-trash" styleClass="p-button-rounded p-button-text p-button-danger"
+                        (onClick)="excluirEmpresa(empresa.id!)" pTooltip="Excluir"></p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5" class="text-center">Nenhuma empresa encontrada</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-tabPanel>
+
+  <!-- Aba de Fornecedores -->
+  <p-tabPanel header="Fornecedores">
+    <div class="p-d-flex p-jc-between p-ai-center p-mb-3">
+      <div class="p-d-flex p-jc-start p-ai-center">
+        <span class="p-input-icon-left p-mr-2">
+          <i class="pi pi-search"></i>
+          <input type="text" pInputText [(ngModel)]="filtroNome" placeholder="Buscar por nome" class="p-mr-2">
+        </span>
+        <span class="p-input-icon-left p-mr-2">
+          <i class="pi pi-id-card"></i>
+          <input type="text" pInputText [(ngModel)]="filtroDocumento" placeholder="Buscar por CPF/CNPJ" class="p-mr-2">
+        </span>
+        <button pButton type="button" label="Buscar" (click)="aplicarFiltros()" class="p-mr-2"></button>
+        <button pButton type="button" label="Limpar" (click)="limparFiltros()" class="p-button-secondary p-mr-2"></button>
+      </div>
+      <div>
+        <button pButton type="button" label="Novo Fornecedor" icon="pi pi-plus" (click)="abrirDialogFornecedor()"></button>
+      </div>
+    </div>
+    <p-table [value]="fornecedores" [loading]="loading" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
+             styleClass="p-datatable-responsive" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} fornecedores"
+             [rowsPerPageOptions]="[10,25,50]">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>CPF/CNPJ</th>
+          <th>Nome</th>
+          <th>Email</th>
+          <th>CEP</th>
+          <th>Ações</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-fornecedor>
+        <tr>
+          <td>{{fornecedor.documento}}</td>
+          <td>{{fornecedor.nome}}</td>
+          <td>{{fornecedor.email}}</td>
+          <td>{{fornecedor.cep}}</td>
+          <td>
+            <div class="p-d-flex p-jc-start">
+              <p-button icon="pi pi-pencil" styleClass="p-button-rounded p-button-text p-mr-2"
+                        (onClick)="abrirDialogFornecedor(fornecedor)" pTooltip="Editar"></p-button>
+              <p-button icon="pi pi-trash" styleClass="p-button-rounded p-button-text p-button-danger"
+                        (onClick)="excluirFornecedor(fornecedor.id!)" pTooltip="Excluir"></p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5" class="text-center">Nenhum fornecedor encontrado</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-tabPanel>
+
+<!-- Diálogos -->
+<p-dialog [(visible)]="displayDialog" [header]="'Fornecedores - ' + (empresaSelecionada?.nomeFantasia || '')"
+          [modal]="true" [style]="{width: '700px'}" [draggable]="false" [resizable]="false"
+          [contentStyle]="{'max-height': '500px', 'overflow': 'auto'}">
+  <div class="p-fluid" *ngIf="empresaSelecionada">
+    <div class="p-field">
+      <label class="font-bold">Selecione os Fornecedores</label>
+      <p-multiSelect [options]="fornecedores"
+                     [(ngModel)]="fornecedoresSelecionados"
+                     optionLabel="nome"
+                     [filter]="true"
+                     [showClear]="true"
+                     [showHeader]="true"
+                     [showToggleAll]="true"
+                     [virtualScroll]="true"
+                     [itemSize]="34"
+                     placeholder="Selecione os fornecedores"
+                     filterPlaceHolder="Buscar fornecedor..."
+                     emptyFilterMessage="Nenhum fornecedor encontrado"
+                     selectedItemsLabel="{0} fornecedores selecionados"
+                     [style]="{'width': '100%'}"
+                     [panelStyle]="{'max-width': '100%', 'max-height': '250px'}"
+                     appendTo="body">
+        <ng-template let-fornecedor pTemplate="item">
+          <div class="p-d-flex p-ai-center">
+            <span class="p-mr-2">{{fornecedor.nome}}</span>
+            <small>({{fornecedor.documento}})</small>
+          </div>
+        </ng-template>
+      </p-multiSelect>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <div class="p-dialog-footer">
+      <p-button label="Cancelar" icon="pi pi-times" (onClick)="fecharDialog()"
+                styleClass="p-button-text"></p-button>
+      <p-button label="Salvar" icon="pi pi-check" (onClick)="salvarVinculos()"
+                [disabled]="!empresaSelecionada"></p-button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- Dialog para visualizar/editar detalhes de um fornecedor -->
+<p-dialog [(visible)]="displayFornecedorDialog" [header]="modoEdicao ? 'Editar Fornecedor' : 'Novo Fornecedor'"
+          [modal]="true" [style]="{width: '450px'}" [draggable]="false" [resizable]="false">
+  <div class="p-fluid" *ngIf="fornecedorSelecionado">
+    <div class="p-field">
+      <label>Tipo de Pessoa</label>
+      <p-selectButton [options]="tiposPessoa" [(ngModel)]="fornecedorSelecionado.tipoPessoa"></p-selectButton>
+    </div>
+    <div class="p-field">
+      <label>Nome <span class="required-marker">*</span></label>
+      <input pInputText [(ngModel)]="fornecedorSelecionado.nome"
+             maxlength="100"
+             required>
+    </div>
+    <div class="p-field">
+      <label>CPF/CNPJ <span class="required-marker">*</span></label>
+      <input pInputText [(ngModel)]="fornecedorSelecionado.documento"
+             maxlength="14"
+             required>
+    </div>
+    <div class="p-field">
+      <label>Email <span class="required-marker">*</span></label>
+      <input pInputText [(ngModel)]="fornecedorSelecionado.email"
+             maxlength="100"
+             required>
+    </div>
+    <div class="p-field">
+      <label>CEP <span class="required-marker">*</span></label>
+      <input pInputText [(ngModel)]="fornecedorSelecionado.cep"
+             maxlength="8"
+             required>
+    </div>
+    <ng-container *ngIf="fornecedorSelecionado.tipoPessoa === 'FISICA'">
+      <div class="p-field">
+        <label>RG <span class="required-marker">*</span></label>
+        <input pInputText [(ngModel)]="fornecedorSelecionado.rg"
+               maxlength="20"
+               required>
+      </div>
+      <div class="p-field">
+        <label>Data de Nascimento <span class="required-marker">*</span></label>
+        <p-calendar [(ngModel)]="fornecedorSelecionado.dataNascimento"
+                   dateFormat="dd/mm/yy"
+                   [showIcon]="true"
+                   [maxDate]="maxDate"
+                   [required]="true"></p-calendar>
+      </div>
+    </ng-container>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="fecharFornecedorDialog()"></button>
+    <button pButton pRipple label="Salvar" icon="pi pi-check" class="p-button-text" (click)="salvarFornecedor()"></button>
+  </ng-template>
+</p-dialog>
+
+<!-- Dialog para criar/editar empresa -->
+<p-dialog [(visible)]="displayEmpresaDialog" [header]="modoEdicaoEmpresa ? 'Editar Empresa' : 'Nova Empresa'"
+          [modal]="true" [style]="{width: '450px'}" [draggable]="false" [resizable]="false">
+  <div class="p-fluid" *ngIf="empresaSelecionadaEdicao">
+    <div class="p-field">
+      <label>Nome Fantasia <span class="required-marker">*</span></label>
+      <input pInputText [(ngModel)]="empresaSelecionadaEdicao.nomeFantasia"
+             maxlength="100"
+             required>
+    </div>
+    <div class="p-field">
+      <label>CNPJ <span class="required-marker">*</span></label>
+      <input pInputText [(ngModel)]="empresaSelecionadaEdicao.cnpj"
+             maxlength="14"
+             required>
+    </div>
+    <div class="p-field">
+      <label>CEP <span class="required-marker">*</span></label>
+      <input pInputText [(ngModel)]="empresaSelecionadaEdicao.cep"
+             maxlength="8"
+             required>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button label="Cancelar" icon="pi pi-times" (onClick)="fecharDialogEmpresa()" styleClass="p-button-text"></p-button>
+    <p-button label="Salvar" icon="pi pi-check" (onClick)="salvarEmpresa()"></p-button>
+  </ng-template>
+</p-dialog>
+
+<p-toast position="top-right"></p-toast>

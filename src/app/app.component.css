@@ -1,0 +1,36 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: var(--surface-ground);
+}
+
+.layout-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.layout-topbar {
+  background-color: var(--primary-color);
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+
+.layout-topbar-logo {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.layout-topbar-logo a {
+  color: white;
+  text-decoration: none;
+}
+
+.layout-main {
+  flex: 1;
+  padding: 2rem;
+  background-color: var(--surface-ground);
+}
